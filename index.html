@@ -1,0 +1,501 @@
+<title>سایت کسخلان اعظم ۹۰۲</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: dark-first RTL fan site. Sticky header, split hero (headline + fake terminal window with a random fact), stats strip, 3x2 category cards, filterable fact grid (each fact "approved" by a member), board-member cards, numbered articles, FAQ accordion. Red + gold on warm black. Lalezar for display, Vazirmatn for text. */
+:root{
+  --bg:#0e0b0b; --bg-head:#140f0f; --surface:#1a1313; --surface-2:#251a1a; --line:#3b2a2a;
+  --fg:#f5efef; --muted:#b9a7a7;
+  --accent:#d8261a; --accent-ink:#ffffff; --accent-text:#ff6657;
+  --gold:#fbe122; --gold-ink:#1c1500; --gold-text:#fbe122;
+  --ok:#2fd380; --shadow:rgba(0,0,0,.65);
+  --display:'Lalezar','Vazirmatn',system-ui,sans-serif;
+  --font:'Vazirmatn',system-ui,'Segoe UI',Tahoma,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#faf5f3; --bg-head:#fffaf8; --surface:#ffffff; --surface-2:#f4ebe8; --line:#e4d3cf;
+    --fg:#1b1111; --muted:#6a5454;
+    --accent:#c8201a; --accent-ink:#ffffff; --accent-text:#b3140c;
+    --gold-text:#7d5a00; --ok:#0f9d58; --shadow:rgba(80,30,20,.25);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#faf5f3; --bg-head:#fffaf8; --surface:#ffffff; --surface-2:#f4ebe8; --line:#e4d3cf;
+  --fg:#1b1111; --muted:#6a5454;
+  --accent:#c8201a; --accent-ink:#ffffff; --accent-text:#b3140c;
+  --gold-text:#7d5a00; --ok:#0f9d58; --shadow:rgba(80,30,20,.25);
+  color-scheme:light;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.9}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg-head)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold-text);outline-offset:3px}
+.wrap{max-width:1160px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ic{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+h1,h2,h3,.brand-name,.stat b{font-family:var(--display);font-weight:400}
+
+/* header */
+.head{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--bg-head);border-bottom:1px solid var(--line)}
+.head-in{display:flex;align-items:center;gap:20px;min-height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-name{font-size:1.45rem;line-height:1.3;white-space:nowrap}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-size:1.05rem;line-height:1;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--gold) 70%,transparent)}
+.nav{flex:1;display:flex;justify-content:center;gap:2px}
+.nav a{color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:10px;font-weight:500;font-size:.95rem}
+.nav a:hover{color:var(--fg);background:var(--surface)}
+.actions{display:flex;align-items:center;gap:10px}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);display:grid;place-items:center;cursor:pointer}
+.icon-btn:hover{border-color:var(--gold-text)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:700;line-height:1.5;border:0;border-radius:14px;padding:12px 22px;cursor:pointer;text-decoration:none;transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:default;transform:none;filter:none}
+.btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 26px -10px color-mix(in srgb,var(--accent) 80%,transparent)}
+.btn-gold{background:var(--gold);color:var(--gold-ink);box-shadow:0 10px 26px -10px color-mix(in srgb,var(--gold) 55%,transparent)}
+.btn-ghost{background:var(--surface-2);color:var(--fg);border:1px solid var(--line)}
+.btn-sm{padding:8px 16px;border-radius:12px;font-size:.9rem}
+
+/* hero */
+.hero{padding-block:56px 44px;background:radial-gradient(60% 55% at 78% 0%,color-mix(in srgb,var(--accent) 26%,transparent),transparent 70%)}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero-grid>*{min-width:0}
+h1{font-size:clamp(2.4rem,6.2vw,4.4rem);line-height:1.35;margin:0 0 18px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--gold-text);display:block}
+.lead{color:var(--muted);font-size:1.05rem;max-width:56ch;margin:0 0 28px}
+.lead b{color:var(--fg);font-weight:700}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.note{display:flex;align-items:center;gap:10px;margin-top:20px;color:var(--muted);font-size:.9rem}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 25%,transparent);flex:none}
+
+.win{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 34px 60px -34px var(--shadow);overflow:hidden;transform:perspective(1400px) rotateY(-5deg) rotateX(2deg)}
+.win-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);color:var(--muted);font-size:.85rem}
+.win-bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.win-bar i:first-child{background:var(--accent)}
+.win-bar i:nth-child(2){background:var(--gold)}
+.win-bar b{margin-inline-start:auto;font-weight:500}
+.win-body{padding:18px}
+.prompt{font-family:var(--mono);font-size:.85rem;color:var(--accent-text);direction:ltr;text-align:left}
+.fact-box{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-block:12px;min-height:12.5em}
+.fact-no{color:var(--muted);font-size:.82rem}
+.fact-text{margin:4px 0 0;font-size:1rem}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 6px;text-align:center;min-width:0}
+.tile b{display:block;color:var(--gold-text);font-family:var(--display);font-weight:400;font-size:1.1rem;line-height:1.7}
+.tile span{color:var(--muted);font-size:.78rem}
+.win-actions{display:flex;gap:10px;margin-top:14px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border:1px solid var(--line);border-radius:20px}
+.stat{padding:20px 14px;text-align:center;border-inline-start:1px solid var(--line)}
+.stat:first-child{border-inline-start:0}
+.stat b{display:block;font-size:2.3rem;color:var(--gold-text);line-height:1.4}
+.stat span{color:var(--muted);font-size:.92rem}
+
+/* sections */
+.sec{padding-block:64px;scroll-margin-top:80px}
+.eyebrow{display:flex;align-items:center;gap:10px;color:var(--accent-text);font-size:.9rem;font-weight:700}
+.eyebrow::after{content:"";width:48px;height:1px;background:var(--accent-text)}
+h2{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.5;margin:6px 0 8px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 32px;max-width:60ch}
+
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cat{display:flex;flex-direction:column;gap:6px;padding:24px;background:var(--surface);border:1px solid var(--line);border-radius:18px;text-decoration:none;min-width:0;transition:border-color .15s,transform .15s}
+.cat:hover{border-color:var(--accent-text);transform:translateY(-2px)}
+.ic-box{width:52px;height:52px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);color:var(--accent-text);display:grid;place-items:center;margin-bottom:10px}
+.ic-box .ic{width:24px;height:24px}
+.cat h3{margin:0;font-size:1.4rem}
+.cat p{margin:0;color:var(--muted);font-size:.95rem}
+.cat small{margin-top:6px;color:var(--gold-text);font-weight:700}
+
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:.9rem;line-height:1.7;border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:4px 14px;border-radius:999px;cursor:pointer}
+.chip:hover{color:var(--fg)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.search{font:inherit;font-size:.95rem;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:7px 14px;width:min(100%,260px);min-width:0}
+.search::placeholder{color:var(--muted)}
+.result{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.fc{display:flex;flex-direction:column;gap:12px;padding:20px;background:var(--surface);border:1px solid var(--line);border-radius:16px;min-width:0}
+.fc-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.82rem}
+.tag{color:var(--accent-text);background:color-mix(in srgb,var(--accent) 16%,transparent);padding:1px 12px;border-radius:999px;font-weight:700}
+.yr{color:var(--muted)}
+.fc p{margin:0;flex:1}
+.by{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.by b{color:var(--fg)}
+.av{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line);color:var(--accent-text);font-weight:700;font-size:.8rem;flex:none}
+.by.boss .av{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
+.by.memorial .av{background:transparent;border-style:dashed}
+.empty{padding:32px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+
+.members{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.mem{display:flex;flex-direction:column;gap:4px;padding:22px;background:var(--surface);border:1px solid var(--line);border-radius:18px;min-width:0}
+.mem.boss{border-color:var(--gold);background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 12%,var(--surface)),var(--surface))}
+.avatar{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;font-family:var(--display);font-size:1.8rem;line-height:1;background:var(--accent);color:var(--accent-ink);margin-bottom:8px}
+.mem.boss .avatar{background:var(--gold);color:var(--gold-ink)}
+.mem h3{margin:0;font-size:1.7rem;line-height:1.4;display:flex;align-items:center;gap:8px}
+.mem h3 .ic{color:var(--gold-text);width:22px;height:22px}
+.role{color:var(--gold-text);font-weight:700;font-size:.92rem}
+.mem p{margin:6px 0 0;color:var(--muted);font-size:.93rem}
+
+.laws{display:grid;grid-template-columns:repeat(2,1fr);column-gap:56px}
+.law{padding:18px 0;border-top:1px solid var(--line);display:flex;gap:14px;align-items:baseline}
+.law h3{margin:0;font-size:1.25rem;color:var(--accent-text);white-space:nowrap}
+.law p{margin:0}
+
+.faq{display:grid;gap:12px;max-width:840px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:16px}
+details[open]{border-color:color-mix(in srgb,var(--gold) 60%,var(--line))}
+summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;font-weight:700}
+summary::-webkit-details-marker{display:none}
+.plus{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);color:var(--gold-text);display:grid;place-items:center;flex:none;transition:transform .2s}
+.plus .ic{width:16px;height:16px}
+details[open] .plus{transform:rotate(45deg)}
+.ans{margin:0;padding:0 20px 18px;color:var(--muted)}
+
+.foot{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:.9rem}
+.foot-in{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+.foot a{color:var(--fg)}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:32px}
+  .win{transform:none}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .members{grid-template-columns:repeat(2,1fr)}
+  .nav{display:none}
+  .actions{margin-inline-start:auto}
+  .laws{grid-template-columns:1fr}
+}
+@media (max-width:700px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(3){border-inline-start:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .sec{padding-block:48px}
+}
+@media (max-width:560px){
+  .cats,.members{grid-template-columns:1fr}
+  .btn{padding:11px 18px}
+}
+@media (max-width:480px){
+  .actions .btn{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+}
+</style>
+
+<div class="site" dir="rtl" lang="fa">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M10 17h4"/></symbol>
+  <symbol id="i-stadium" viewBox="0 0 24 24"><path d="M3 9c0-2 4-4 9-4s9 2 9 4v7c0 2-4 4-9 4s-9-2-9-4zM3 9c0 2 4 4 9 4s9-2 9-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M5 6h14M5 11h14M5 16h9M5 21h6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
+
+<header class="head">
+  <div class="wrap head-in">
+    <a class="brand" href="#top" aria-label="سایت کسخلان اعظم ۹۰۲">
+      <span class="logo">۹۰۲</span>
+      <span class="brand-name">کسخلان اعظم ۹۰۲</span>
+    </a>
+    <nav class="nav" aria-label="بخش‌ها">
+      <a href="#cats">دسته‌ها</a>
+      <a href="#facts">نکته‌ها</a>
+      <a href="#board">هیئت‌مدیره</a>
+      <a href="#laws">اصول</a>
+      <a href="#faq">سؤال‌ها</a>
+    </nav>
+    <div class="actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="تغییر تم"><svg class="ic"><use id="themeUse" href="#i-sun"/></svg></button>
+      <button class="btn btn-primary btn-sm" type="button" data-random><svg class="ic"><use href="#i-bolt"/></svg>نکتهٔ تصادفی</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>سایت کسخلان اعظم ۹۰۲
+          <em>به ریاست یاسین</em></h1>
+        <p class="lead">تاریخ، افتخارات و افسانه‌های <b>منچستر یونایتد</b>، به‌روایت <b>یاسین</b>، <b>بهزاد</b>، <b>رهام</b> و <b>امیرعلی</b>. زیر هر نکته نوشته شده کدام عضو هیئت‌مدیره آن را تأیید کرده است.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#facts"><svg class="ic"><use href="#i-list"/></svg>همهٔ نکته‌ها</a>
+          <button class="btn btn-gold" type="button" data-random><svg class="ic"><use href="#i-bolt"/></svg>یک نکتهٔ تصادفی</button>
+        </div>
+        <div class="note"><span class="dot"></span>بدون ثبت‌نام، بدون تبلیغ؛ فقط یونایتد</div>
+      </div>
+
+      <div class="win" id="win">
+        <div class="win-bar"><i></i><i></i><i></i><b>کسخلان ۹۰۲ · نکتهٔ تصادفی</b></div>
+        <div class="win-body">
+          <div class="prompt">$ yasin --fact --random</div>
+          <div class="fact-box" aria-live="polite">
+            <div class="fact-no" id="fNo">نکتهٔ ۵ از ۲۸</div>
+            <p class="fact-text" id="fText">در ۱۹۶۸ یونایتد با پیروزی ۴–۱ برابر بنفیکا اولین باشگاه انگلیسی شد که جام باشگاه‌های اروپا را برد.</p>
+          </div>
+          <div class="tiles">
+            <div class="tile"><b id="tCat">تاریخچه</b><span>دسته</span></div>
+            <div class="tile"><b id="tYear">۱۹۶۸</b><span>سال</span></div>
+            <div class="tile"><b id="tBy">رهام</b><span>تأییدکننده</span></div>
+          </div>
+          <div class="win-actions">
+            <button class="btn btn-primary btn-sm" type="button" data-random>نکتهٔ بعدی</button>
+            <button class="btn btn-ghost btn-sm" type="button" id="prevBtn" disabled>قبلی</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap" style="margin-top:44px">
+      <div class="stats">
+        <div class="stat"><b>۲۰</b><span>قهرمانی در لیگ دسته اول انگلیس</span></div>
+        <div class="stat"><b>۳</b><span>قهرمانی در جام باشگاه‌های اروپا</span></div>
+        <div class="stat"><b>۱۳</b><span>جام حذفی</span></div>
+        <div class="stat"><b>۱۸۷۸</b><span>سال تأسیس باشگاه</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="cats">
+    <div class="wrap">
+      <div class="eyebrow">دسته‌بندی رسمی</div>
+      <h2>یاسین دسته‌ها را چید، بقیه فقط کلیک کنند</h2>
+      <p class="sub">یک دسته را انتخاب کن تا فقط نکته‌های همان بخش بماند.</p>
+      <div class="cats" id="catCards"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="facts">
+    <div class="wrap">
+      <div class="eyebrow">نکته‌ها</div>
+      <h2>نکته‌هایی که یاسین امضا کرده و بهزاد و رهام و امیرعلی تأیید کرده‌اند</h2>
+      <p class="sub">زیر هر نکته نوشته شده کدام عضو هیئت‌مدیره آن را تأیید کرده است.</p>
+      <div class="tools">
+        <div class="chips" id="chips" role="group" aria-label="فیلتر دسته"></div>
+        <input class="search" id="q" type="search" placeholder="جست‌وجو: فرگوسن، ۱۹۹۹، اولد ترافورد..." aria-label="جست‌وجو در نکته‌ها" autocomplete="off">
+      </div>
+      <p class="result" id="result"></p>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="board">
+    <div class="wrap">
+      <div class="eyebrow">هیئت‌مدیره</div>
+      <h2>یاسین و سه یار وفادار</h2>
+      <p class="sub">چهار نفری که این سایت را اداره می‌کنند. سِمت‌ها شوخی است.</p>
+      <div class="members">
+        <article class="mem boss"><div class="avatar">ی</div><h3>یاسین <svg class="ic"><use href="#i-crown"/></svg></h3><span class="role">رئیس اعظم</span><p>آخرین حرف در هر بحث فوتبالی با اوست.</p></article>
+        <article class="mem"><div class="avatar">ب</div><h3>بهزاد</h3><span class="role">مسئول آمار و ارقام</span><p>هر عدد و تاریخی را قبل از بقیه می‌آورد.</p></article>
+        <article class="mem"><div class="avatar">ر</div><h3>رهام</h3><span class="role">سخنگوی رسمی</span><p>وقتی تیم گل می‌خورد، پنج دقیقه سکوت می‌کند.</p></article>
+        <article class="mem"><div class="avatar">ا</div><h3>امیرعلی</h3><span class="role">مدیر ورزشگاه</span><p>مسئول یادآوری ساعت بازی و پیدا کردن جا.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="laws">
+    <div class="wrap">
+      <div class="eyebrow">اصول</div>
+      <h2>اصول اساسی به پیشنهاد یاسین</h2>
+      <p class="sub">شش ماده که هر عضو باید رعایت کند.</p>
+      <div class="laws">
+        <div class="law"><h3>ماده ۱</h3><p>حرف آخر در بحث‌های فوتبالی با یاسین است.</p></div>
+        <div class="law"><h3>ماده ۲</h3><p>بهزاد آمار می‌آورد. بقیه حق دارند مخالفت کنند، ولی بدون آمار نه.</p></div>
+        <div class="law"><h3>ماده ۳</h3><p>رهام بعد از گل خوردن حق دارد پنج دقیقه ساکت بماند.</p></div>
+        <div class="law"><h3>ماده ۴</h3><p>امیرعلی موظف است ساعت بازی را یادآوری کند.</p></div>
+        <div class="law"><h3>ماده ۵</h3><p>هر کس بگوید «فقط یک بازی بود»، آن شب شام می‌دهد.</p></div>
+        <div class="law"><h3>ماده ۶</h3><p>در شب دربی منچستر، پیام‌ها و تماس‌های غیرضروری ممنوع است.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq">
+    <div class="wrap">
+      <div class="eyebrow">سؤال‌های متداول</div>
+      <h2>پاسخ پرسش‌های پرتکرار، با تأیید یاسین</h2>
+      <p class="sub">هر چیزی که قبل از شروع لازم است بدانی.</p>
+      <div class="faq">
+        <details><summary>سایت کسخلان اعظم ۹۰۲ چیست؟<span class="plus"><svg class="ic"><use href="#i-plus"/></svg></span></summary><p class="ans">یک سایت دوستانه دربارهٔ باشگاه منچستر یونایتد که برای یاسین، بهزاد، رهام و امیرعلی ساخته شده. اسم سایت هم شوخی بین خودشان است.</p></details>
+        <details><summary>اطلاعات از کجا آمده؟<span class="plus"><svg class="ic"><use href="#i-plus"/></svg></span></summary><p class="ans">از ویکی‌پدیا و سایت رسمی باشگاه، با بازنویسی و خلاصه‌سازی. آمار تا زمانی است که این سایت ساخته شد (۲۰۲۶) و ممکن است بعداً عوض شود، مخصوصاً دربارهٔ مربی و جام‌های تازه.</p></details>
+        <details><summary>یونایتد چند بار قهرمان لیگ شده؟<span class="plus"><svg class="ic"><use href="#i-plus"/></svg></span></summary><p class="ans">۲۰ بار در دسته اول فوتبال انگلیس، که ۱۳ تایش در دورهٔ پریمیرلیگ بوده. آخرین قهرمانی در منبع مربوط به سال ۲۰۱۳ است.</p></details>
+        <details><summary>«تأییدکننده» یعنی چه؟<span class="plus"><svg class="ic"><use href="#i-plus"/></svg></span></summary><p class="ans">شوخی داخلی: هر نکته را یکی از اعضای هیئت‌مدیره «تأیید» کرده. سانحهٔ مونیخ تأییدکننده ندارد، چون برای آن شوخی نمی‌کنیم.</p></details>
+        <details><summary>چطور نکتهٔ تصادفی بگیرم؟<span class="plus"><svg class="ic"><use href="#i-plus"/></svg></span></summary><p class="ans">روی دکمهٔ «نکتهٔ تصادفی» بزن. با «قبلی» می‌توانی به نکتهٔ قبلی برگردی.</p></details>
+        <details><summary>می‌شود نکته یا عضو جدید اضافه کرد؟<span class="plus"><svg class="ic"><use href="#i-plus"/></svg></span></summary><p class="ans">بله، فقط به سازندهٔ سایت بگو. در این نسخه فرم ارسال وجود ندارد.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span>سایت کسخلان اعظم ۹۰۲ · ساخته‌شده برای یاسین، بهزاد، رهام و امیرعلی</span>
+    <span>منابع: <a href="https://en.wikipedia.org/wiki/Manchester_United_F.C." target="_blank" rel="noopener">ویکی‌پدیا</a> و <a href="https://www.manutd.com/en/History/Trophy-Room" target="_blank" rel="noopener">سایت رسمی باشگاه</a></span>
+  </div>
+</footer>
+</div>
+
+<script>
+(function(){
+  var PEOPLE={y:'یاسین',b:'بهزاد',r:'رهام',a:'امیرعلی'};
+  var CATS={
+    history:{n:'تاریخچه',i:'clock',d:'از کارگرهای راه‌آهن تا اولین جام اروپایی انگلیس.'},
+    honours:{n:'افتخارات',i:'trophy',d:'لیگ، جام حذفی، اروپا و جهان؛ شمارش جام‌ها.'},
+    stadium:{n:'ورزشگاه و رقبا',i:'stadium',d:'اولد ترافورد، شیاطین سرخ و دیدارهای بزرگ.'},
+    ferguson:{n:'عصر فرگوسن',i:'user',d:'بیست‌وهفت سال، سی‌وهشت جام و یک شب فراموش‌نشدنی.'},
+    legends:{n:'ستاره‌ها',i:'star',d:'از بست و چارلتون تا بکام و رونالدو.'},
+    recent:{n:'روزگار اخیر',i:'trend',d:'مالکیت، مربی‌ها و فصل‌های سخت‌تر.'}
+  };
+  var FACTS=[
+    {c:'history',y:'۱۸۷۸',p:'y',t:'باشگاه در ۱۸۷۸ با نام «نیوتن هیث» تأسیس شد؛ تیمی از کارگران بخش واگن و ارابهٔ انبار راه‌آهن لنکاشایر و یورکشایر، نه یک غول فوتبال.'},
+    {c:'history',y:'۱۹۰۲',p:'b',t:'اسم «منچستر یونایتد» در ۲۴ آوریل ۱۹۰۲ رسمی شد؛ آن هم وقتی چهار تاجر محلی برای نجات باشگاه از ورشکستگی پول گذاشتند.'},
+    {c:'history',y:'۱۹۴۵',p:'y',t:'متی باسبی در ۱۹۴۵ سرمربی شد و تیم جوانی ساخت که به «بچه‌های باسبی» معروف شد. این تیم در ۱۹۵۷ اولین نمایندهٔ انگلیس در جام باشگاه‌های اروپا بود.'},
+    {c:'history',y:'۱۹۵۸',p:'',t:'ششم فوریهٔ ۱۹۵۸ سانحهٔ هوایی مونیخ جان ۲۳ نفر، از جمله هشت بازیکن باشگاه، را گرفت. این ماجرا تا امروز یکی از غمگین‌ترین فصل‌های تاریخ یونایتد است.'},
+    {c:'history',y:'۱۹۶۸',p:'r',t:'در ۱۹۶۸ یونایتد با پیروزی ۴–۱ برابر بنفیکا اولین باشگاه انگلیسی شد که جام باشگاه‌های اروپا را برد.'},
+
+    {c:'honours',y:'۲۰۱۳',p:'y',t:'یونایتد ۲۰ بار قهرمان دسته اول فوتبال انگلیس شده؛ ۱۳ تایش در دورهٔ پریمیرلیگ. آخرین قهرمانی در منبع مربوط به ۲۰۱۳ است و این تعداد رکورد مشترک انگلیس به شمار می‌رود.'},
+    {c:'honours',y:'۲۰۲۴',p:'a',t:'۱۳ جام حذفی در کارنامه دارد و آخرین‌اش مربوط به فصل ۲۰۲۳–۲۴ است.'},
+    {c:'honours',y:'۲۰۰۸',p:'y',t:'سه بار قهرمان اروپا شده است: ۱۹۶۸، ۱۹۹۹ و ۲۰۰۸.'},
+    {c:'honours',y:'۲۰۱۷',p:'b',t:'جام‌های اروپایی دیگرش: یک لیگ اروپا (۲۰۱۶–۱۷)، یک جام برندگان جام (۱۹۹۰–۹۱) و یک سوپرجام اروپا (۱۹۹۱).'},
+    {c:'honours',y:'۲۰۰۸',p:'r',t:'در ۲۰۰۸ جام باشگاه‌های جهان را برد و در ۱۹۹۹ جام بین‌قاره‌ای را. ۲۱ سوپرجام انگلیس هم دارد که رکورد است.'},
+
+    {c:'stadium',y:'۱۹۱۰',p:'a',t:'اولد ترافورد از ۱۹۱۰ خانهٔ باشگاه است و ظرفیت اعلام‌شده‌اش ۷۴٬۲۴۴ نفر است.'},
+    {c:'stadium',y:'۲۰۲۵',p:'y',t:'در مارس ۲۰۲۵ از ساخت ورزشگاه تازه‌ای با ظرفیت ۱۰۰ هزار نفر کنار اولد ترافورد خبر داده شد.'},
+    {c:'stadium',y:'',p:'b',t:'لقب باشگاه «شیاطین سرخ» است و لباس خانگی‌اش پیراهن قرمز، شورت سفید و جوراب مشکی.'},
+    {c:'stadium',y:'',p:'r',t:'بزرگ‌ترین حریف‌ها: لیورپول که یکی از معروف‌ترین دیدارهای فوتبال انگلیس را می‌سازد، منچسترسیتی در دربی شهر، و بعد لیدز، آرسنال و چلسی.'},
+
+    {c:'ferguson',y:'۱۹۸۶',p:'y',t:'الکس فرگوسن ۶ نوامبر ۱۹۸۶ از اَبردین آمد، همان روزی که ران اتکینسون برکنار شد. ۲۷ سال ماند و آخرین بازی‌اش ۱۹ مه ۲۰۱۳ مساوی ۵–۵ برابر وست‌برومویچ بود.'},
+    {c:'ferguson',y:'۲۰۱۳',p:'a',t:'در دوران فرگوسن ۳۸ جام آمد، از جمله ۱۳ پریمیرلیگ، پنج جام حذفی و دو قهرمانی در لیگ قهرمانان اروپا.'},
+    {c:'ferguson',y:'۱۹۹۰',p:'b',t:'فرگوسن فصل اولش را یازدهم تمام کرد. بردن بازی تکراری فینال حذفی ۱۹۹۰ برابر کریستال پالاس، طبق روایت‌ها شغلش را نجات داد.'},
+    {c:'ferguson',y:'۱۹۹۹',p:'y',t:'در فصل ۱۹۹۸–۹۹ یونایتد اولین باشگاه انگلیسی شد که لیگ، جام حذفی و لیگ قهرمانان را در یک فصل برد. در فینال برابر بایرن بعد از گل دقیقهٔ ۶ باسلر عقب بود، ولی شرینگام و سولسشر در وقت اضافه بازی را ۲–۱ برگرداندند.'},
+    {c:'ferguson',y:'۱۹۹۶',p:'r',t:'با دبل لیگ و جام حذفی در ۱۹۹۳–۹۴ و ۱۹۹۵–۹۶، یونایتد اولین باشگاه انگلیسی شد که دو بار دبل کرد.'},
+
+    {c:'legends',y:'',p:'y',t:'بابی چارلتون، دنیس لاو و جورج بست به «سه‌گانهٔ یونایتد» معروف‌اند؛ ستاره‌های دوران باسبی.'},
+    {c:'legends',y:'۱۹۹۴',p:'b',t:'بکام، پل اسکولز، گری و فیل نویل و نیکی بات از ۱۹۹۴–۹۵ بازیکن ثابت شدند. رایان گیگز هم از ۱۹۹۰–۹۱ بود و در ۲۰۰۸ به رکورد ۷۵۹ بازی رسید.'},
+    {c:'legends',y:'۲۰۰۳',p:'y',t:'کریستیانو رونالدو در ۲۰۰۳ با حدود ۱۲٫۲ میلیون پوند آمد و در ۲۰۰۹ با ۸۰ میلیون پوند فروخته شد.'},
+    {c:'legends',y:'۱۹۹۲',p:'a',t:'کانتونا در ۱۹۹۲ با ۱٫۱ میلیون پوند آمد. روی کین (۱۹۹۳، ۳٫۷۵ میلیون) و اندی کول (۱۹۹۵، ۷ میلیون) هر دو رکورد انتقال انگلیس را زدند.'},
+    {c:'legends',y:'۲۰۰۲',p:'r',t:'ریو فردیناند در ۲۰۰۲ با ۲۹ میلیون پوند رکورد انتقال بریتانیا را زد. وین رونی (۲۰۰۴، ۲۵٫۶ میلیون) و رابین ون پرسی (۲۰۱۲، ۲۵ میلیون) هم بعدتر آمدند.'},
+
+    {c:'recent',y:'۲۰۰۵',p:'y',t:'خانوادهٔ گلیزر در ۲۰۰۵ با خریدی پرقرض باشگاه را خصوصی کرد. از دسامبر ۲۰۲۳ شرکت اینئوس به مالکیت سر جیم رَتکلیف کنترل بخش فوتبال را دارد؛ طبق منبع، گلیزرها حدود ۷۱٪ و رتکلیف حدود ۲۹٪ سهام دارند.'},
+    {c:'recent',y:'۲۰۱۳',p:'b',t:'بعد از فرگوسن، مویز، ون خال، مورینیو، سولشر، رانگنیک (موقت)، تن‌هاخ و آموریم روی نیمکت نشستند. این فهرست تا ژانویهٔ ۲۰۲۶ است و ممکن است عوض شده باشد.'},
+    {c:'recent',y:'۲۰۲۵',p:'r',t:'فصل ۲۰۲۴–۲۵ را پانزدهم تمام کرد، که بدترین رتبه از ۱۹۷۳–۷۴ بود. فینال لیگ اروپای ۲۰۲۵ را هم ۱–۰ به تاتنهام باخت.'},
+    {c:'recent',y:'۲۰۲۵',p:'a',t:'درآمد سال مالی منتهی به ژوئن ۲۰۲۵ حدود ۶۶۶٫۵ میلیون پوند گزارش شد، ولی باشگاه حدود ۳۳ میلیون پوند زیان خالص داشت.'}
+  ];
+
+  var fa=function(n){return Number(n).toLocaleString('fa-IR')};
+  var $=function(s){return document.querySelector(s)};
+  var norm=function(s){return String(s).replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/‌/g,' ').toLowerCase()};
+  var keys=Object.keys(CATS);
+  var state={cat:'all',q:''};
+  var cur=4, hist=[];
+
+  /* category cards */
+  $('#catCards').innerHTML=keys.map(function(k){
+    var n=FACTS.filter(function(f){return f.c===k}).length;
+    return '<a class="cat" href="#facts" data-cat="'+k+'"><span class="ic-box"><svg class="ic"><use href="#i-'+CATS[k].i+'"/></svg></span><h3>'+CATS[k].n+'</h3><p>'+CATS[k].d+'</p><small>'+fa(n)+' نکته</small></a>';
+  }).join('');
+
+  /* chips */
+  function chipHtml(k,label,n){
+    return '<button class="chip" type="button" data-cat="'+k+'" aria-pressed="'+(state.cat===k)+'">'+label+' ('+fa(n)+')</button>';
+  }
+  function renderChips(){
+    var h=chipHtml('all','همه',FACTS.length);
+    keys.forEach(function(k){h+=chipHtml(k,CATS[k].n,FACTS.filter(function(f){return f.c===k}).length)});
+    $('#chips').innerHTML=h;
+  }
+
+  /* approver badge */
+  function byHtml(p){
+    if(!p)return '<div class="by memorial"><span class="av">·</span><span>یادبود</span></div>';
+    var name=PEOPLE[p];
+    return '<div class="by'+(p==='y'?' boss':'')+'"><span class="av">'+name.charAt(0)+'</span><span>تأیید <b>'+name+'</b></span></div>';
+  }
+
+  /* grid */
+  function renderGrid(){
+    var q=norm(state.q.trim());
+    var list=FACTS.filter(function(f){
+      if(state.cat!=='all'&&f.c!==state.cat)return false;
+      if(!q)return true;
+      return norm(f.t).indexOf(q)>-1||norm(CATS[f.c].n).indexOf(q)>-1||norm(f.y).indexOf(q)>-1||(f.p&&norm(PEOPLE[f.p]).indexOf(q)>-1);
+    });
+    $('#result').textContent=list.length?('نمایش '+fa(list.length)+' نکته'):'';
+    if(!list.length){
+      $('#grid').innerHTML='<div class="empty" style="grid-column:1/-1">نکته‌ای با این عبارت پیدا نشد. عبارت دیگری امتحان کن یا فیلتر دسته را روی «همه» بگذار.</div>';
+      return;
+    }
+    $('#grid').innerHTML=list.map(function(f){
+      return '<article class="fc"><div class="fc-top"><span class="tag">'+CATS[f.c].n+'</span><span class="yr">'+(f.y||'')+'</span></div><p>'+f.t+'</p>'+byHtml(f.p)+'</article>';
+    }).join('');
+  }
+  function setCat(k){state.cat=k;renderChips();renderGrid()}
+
+  $('#chips').addEventListener('click',function(e){
+    var b=e.target.closest('.chip');if(b)setCat(b.getAttribute('data-cat'));
+  });
+  $('#catCards').addEventListener('click',function(e){
+    var a=e.target.closest('.cat');if(a)setCat(a.getAttribute('data-cat'));
+  });
+  $('#q').addEventListener('input',function(e){state.q=e.target.value;renderGrid()});
+
+  /* random fact window */
+  function show(i){
+    cur=i;var f=FACTS[i];
+    $('#fNo').textContent='نکتهٔ '+fa(i+1)+' از '+fa(FACTS.length);
+    $('#fText').textContent=f.t;
+    $('#tCat').textContent=CATS[f.c].n;
+    $('#tYear').textContent=f.y||'—';
+    $('#tBy').textContent=f.p?PEOPLE[f.p]:'یادبود';
+    $('#prevBtn').disabled=!hist.length;
+  }
+  function next(){
+    hist.push(cur);if(hist.length>50)hist.shift();
+    var i;do{i=Math.floor(Math.random()*FACTS.length)}while(i===cur&&FACTS.length>1);
+    show(i);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-random]'),function(b){
+    b.addEventListener('click',function(){
+      next();
+      var w=$('#win');
+      if(w&&w.scrollIntoView)w.scrollIntoView({block:'nearest',behavior:'smooth'});
+    });
+  });
+  $('#prevBtn').addEventListener('click',function(){if(hist.length)show(hist.pop())});
+
+  /* theme */
+  var root=document.documentElement;
+  var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: light)'):null;
+  function isDark(){
+    var t=root.getAttribute('data-theme');
+    if(t)return t==='dark';
+    return !(mq&&mq.matches);
+  }
+  function paintThemeBtn(){
+    $('#themeUse').setAttribute('href',isDark()?'#i-sun':'#i-moon');
+    $('#themeBtn').setAttribute('aria-label',isDark()?'تم روشن':'تم تیره');
+  }
+  $('#themeBtn').addEventListener('click',function(){
+    root.setAttribute('data-theme',isDark()?'light':'dark');paintThemeBtn();
+  });
+  if(mq&&mq.addEventListener)mq.addEventListener('change',paintThemeBtn);
+
+  renderChips();renderGrid();show(cur);paintThemeBtn();
+})();
+</script>
